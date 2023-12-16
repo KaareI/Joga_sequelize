@@ -14,8 +14,12 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.Author, {
         foreignKey: {
           name: 'AuthorAuthorId',
-          field: 'author_id'
+          field: 'author_id',
         }
+      })
+      this.belongsToMany(models.Tag, {
+        foreignKey: 'articleId',
+        through: 'ArticleTags',
       })
     }
   }
