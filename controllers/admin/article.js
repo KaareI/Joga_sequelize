@@ -54,10 +54,10 @@ const updateArticle = (req, res) => {
             })
             .then(updatedArticle => {
                 if (!updatedArticle) {
-                    return res.status(404).json({ message: 'Article not found' });
+                    return res.status(404).json({message: 'Article not found'});
                 }
                 // Send the updated article information in the response
-                return res.status(200).json({ message: 'Article updated', article: updatedArticle });
+                return res.status(200).json({message: 'Article updated', article: updatedArticle});
             })
             .catch(error => {
                 return res.status(500).send(error.message);
@@ -65,8 +65,33 @@ const updateArticle = (req, res) => {
     }
 };
 
+const deleteArticle = (req, res) => {
+    if (req.method === 'POST') {
+        let id = req.params.id;
+
+        models.Article.findByPk(id) // Fetch the article before deleting
+            .then(article => {
+                if (!article) {
+                    return res.status(404).json({message: 'Article not found'});
+                }
+
+                return models.Article.destroy({
+                    where: {
+                        id: id
+                    }
+                });
+            })
+            .then(() => {
+                return res.status(200).json({message: 'Article deleted', article: {id}});
+            })
+            .catch(error => {
+                return res.status(500).send(error.message);
+            });
+    }
+};
 
 module.exports = {
-    createArticle
-    updateArticle
+    createArticle,
+    updateArticle,
+    deleteArticle
 }
