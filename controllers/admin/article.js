@@ -29,6 +29,44 @@ const createArticle = (req, res) => {
 
 }
 
+const updateArticle = (req, res) => {
+    if (req.method === 'POST') {
+        let id = req.params.id;
+        let name = req.body.name;
+        let slug = req.body.slug;
+        let image = req.body.image;
+        let body = req.body.body;
+
+        models.Article.update({
+                name: name,
+                slug: slug,
+                image: image,
+                body: body,
+            },
+            {
+                where: {
+                    id: id
+                }
+            })
+            .then(() => {
+                // Fetch the updated article
+                return models.Article.findByPk(id);
+            })
+            .then(updatedArticle => {
+                if (!updatedArticle) {
+                    return res.status(404).json({ message: 'Article not found' });
+                }
+                // Send the updated article information in the response
+                return res.status(200).json({ message: 'Article updated', article: updatedArticle });
+            })
+            .catch(error => {
+                return res.status(500).send(error.message);
+            });
+    }
+};
+
+
 module.exports = {
     createArticle
+    updateArticle
 }
